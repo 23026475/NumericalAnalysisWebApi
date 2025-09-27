@@ -1,0 +1,28 @@
+[
+  {
+    "ContainingType": "NumericalAnalysisApi.Controllers.RootFindingController",
+    "Method": "Bisection",
+    "RelativePath": "api/RootFinding/bisection",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "NumericalAnalysisApi.Models.RootRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "NumericalAnalysisApi.Models.RootResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  }
+]
