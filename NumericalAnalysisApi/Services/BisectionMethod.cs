@@ -1,16 +1,8 @@
-﻿namespace NumericalAnalysisApi.Services
+﻿namespace NumericalAnalysisApi.Methods
 {
     public class BisectionMethod
     {
-        /// <summary>
-        /// Approximates a root of a continuous function using the Bisection Method.
-        /// </summary>
-        /// <param name="func">The function f(x).</param>
-        /// <param name="a">The start of the interval.</param>
-        /// <param name="b">The end of the interval.</param>
-        /// <param name="tolerance">The acceptable error margin.</param>
-        /// <param name="maxIterations">The maximum number of iterations.</param>
-        /// <returns>The approximate root.</returns>
+        
         public double Solve(Func<double, double> func, double a, double b, double tolerance = 0.001, int maxIterations = 100)
         {
             if (func(a) * func(b) >= 0)

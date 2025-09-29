@@ -7,7 +7,7 @@ namespace NumericalAnalysisApi.Utils
     {
         public static Func<double, double> Parse(string expression)
         {
-            // Convert ^ into Pow(x, n)
+            
             expression = Regex.Replace(expression, @"(\w+)\s*\^\s*(\d+)", "Pow($1,$2)");
 
             return (x) =>
