@@ -26,7 +26,7 @@ namespace NumericalAnalysisApi.Controllers
         /// Finds a root using the Bisection Method.
         /// </summary>
         [HttpPost("bisection")]
-        public ActionResult<RootResponse> Bisection([FromBody] RootRequest request)
+        public ActionResult<RootResponse> Bisection([FromBody] BisectionRequest request)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace NumericalAnalysisApi.Controllers
         /// Finds a root using the Regula-Falsi Method.
         /// </summary>
         [HttpPost("regulafalsi")]
-        public ActionResult<RootResponse> RegulaFalsi([FromBody] RootRequest request)
+        public ActionResult<RootResponse> RegulaFalsi([FromBody] RegulaFalsiRequest request)
         {
             try
             {
