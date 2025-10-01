@@ -22,16 +22,16 @@ namespace NumericalAnalysisApi.Controllers
             _regulaFalsiMethod = new RegulaFalsiMethod();
         }
 
-        /// <summary>
-        /// Finds a root using the Bisection Method.
-        /// </summary>
         [HttpPost("bisection")]
+        [ProducesResponseType(typeof(RootResponse), 200)]
+        [ProducesResponseType(typeof(RootResponse), 400)]
         public ActionResult<RootResponse> Bisection([FromBody] BisectionRequest request)
         {
             try
             {
-                Func<double, double> func = FunctionParser.Parse(request.Function);
-                var (root, iterations) = _bisectionMethod.Solve(func, request.A, request.B, request.Tolerance, request.MaxIterations);
+                var func = FunctionParser.Parse(request.Function);
+                var (root, iterations) = _bisectionMethod.Solve(
+                    func, request.A, request.B, request.Tolerance, request.MaxIterations);
 
                 return Ok(new RootResponse
                 {
@@ -45,23 +45,23 @@ namespace NumericalAnalysisApi.Controllers
                 return BadRequest(new RootResponse
                 {
                     Success = false,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = $"Bisection failed for {request.Function}: {ex.Message}"
                 });
             }
         }
 
-        /// <summary>
-        /// Finds a root using the Newton-Raphson Method.
-        /// </summary>
         [HttpPost("newton")]
+        [ProducesResponseType(typeof(RootResponse), 200)]
+        [ProducesResponseType(typeof(RootResponse), 400)]
         public ActionResult<RootResponse> Newton([FromBody] NewtonRequest request)
         {
             try
             {
-                Func<double, double> func = FunctionParser.Parse(request.Function);
-                Func<double, double> fPrime = FunctionParser.Parse(request.Derivative);
+                var func = FunctionParser.Parse(request.Function);
+                var fPrime = FunctionParser.Parse(request.Derivative);
 
-                var (root, iterations) = _newtonMethod.Solve(func, fPrime, request.InitialGuess, request.Tolerance, request.MaxIterations);
+                var (root, iterations) = _newtonMethod.Solve(
+                    func, fPrime, request.InitialGuess, request.Tolerance, request.MaxIterations);
 
                 return Ok(new RootResponse
                 {
@@ -75,21 +75,21 @@ namespace NumericalAnalysisApi.Controllers
                 return BadRequest(new RootResponse
                 {
                     Success = false,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = $"Newton-Raphson failed for {request.Function}: {ex.Message}"
                 });
             }
         }
 
-        /// <summary>
-        /// Finds a root using the Secant Method.
-        /// </summary>
         [HttpPost("secant")]
+        [ProducesResponseType(typeof(RootResponse), 200)]
+        [ProducesResponseType(typeof(RootResponse), 400)]
         public ActionResult<RootResponse> Secant([FromBody] SecantRequest request)
         {
             try
             {
-                Func<double, double> func = FunctionParser.Parse(request.Function);
-                var (root, iterations) = _secantMethod.Solve(func, request.X0, request.X1, request.Tolerance, request.MaxIterations);
+                var func = FunctionParser.Parse(request.Function);
+                var (root, iterations) = _secantMethod.Solve(
+                    func, request.X0, request.X1, request.Tolerance, request.MaxIterations);
 
                 return Ok(new RootResponse
                 {
@@ -103,21 +103,21 @@ namespace NumericalAnalysisApi.Controllers
                 return BadRequest(new RootResponse
                 {
                     Success = false,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = $"Secant failed for {request.Function}: {ex.Message}"
                 });
             }
         }
 
-        /// <summary>
-        /// Finds a root using the Regula-Falsi Method.
-        /// </summary>
         [HttpPost("regulafalsi")]
+        [ProducesResponseType(typeof(RootResponse), 200)]
+        [ProducesResponseType(typeof(RootResponse), 400)]
         public ActionResult<RootResponse> RegulaFalsi([FromBody] RegulaFalsiRequest request)
         {
             try
             {
-                Func<double, double> func = FunctionParser.Parse(request.Function);
-                var (root, iterations) = _regulaFalsiMethod.Solve(func, request.A, request.B, request.Tolerance, request.MaxIterations);
+                var func = FunctionParser.Parse(request.Function);
+                var (root, iterations) = _regulaFalsiMethod.Solve(
+                    func, request.A, request.B, request.Tolerance, request.MaxIterations);
 
                 return Ok(new RootResponse
                 {
@@ -131,7 +131,7 @@ namespace NumericalAnalysisApi.Controllers
                 return BadRequest(new RootResponse
                 {
                     Success = false,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = $"Regula Falsi failed for {request.Function}: {ex.Message}"
                 });
             }
         }
