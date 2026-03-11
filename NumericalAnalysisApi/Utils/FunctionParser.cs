@@ -10,6 +10,7 @@ namespace NumericalAnalysisApi.Utils
             try
             {
                 // Normalize casing (all lowercase for easier handling)
+                string originalExpression = expression;
                 expression = expression.ToLower().Trim();
 
                 // Replace constants
@@ -18,6 +19,27 @@ namespace NumericalAnalysisApi.Utils
 
                 // Replace ^ with Pow()
                 expression = Regex.Replace(expression, @"(\w+|\([^)]*\))\s*\^\s*([-\w.()]+)", "Pow($1,$2)");
+
+                // Convert function names to proper case (Sin, Cos, Tan, etc.)
+                expression = Regex.Replace(expression, @"\b(sin|cos|tan|asin|acos|atan|sinh|cosh|tanh|sqrt|abs|log|ln|exp)\b",
+                    match => match.Value switch
+                    {
+                        "sin" => "Sin",
+                        "cos" => "Cos",
+                        "tan" => "Tan",
+                        "asin" => "Asin",
+                        "acos" => "Acos",
+                        "atan" => "Atan",
+                        "sinh" => "Sinh",
+                        "cosh" => "Cosh",
+                        "tanh" => "Tanh",
+                        "sqrt" => "Sqrt",
+                        "abs" => "Abs",
+                        "log" => "Log",
+                        "ln" => "Ln",
+                        "exp" => "Exp",
+                        _ => match.Value
+                    });
 
                 return (x) =>
                 {
@@ -36,16 +58,16 @@ namespace NumericalAnalysisApi.Utils
                                 break;
                             case "log":
                                 if (args.Parameters.Length == 1)
-                                    args.Result = Math.Log10(Convert.ToDouble(args.Parameters[0].Evaluate())); // log(x)
+                                    args.Result = Math.Log10(Convert.ToDouble(args.Parameters[0].Evaluate()));
                                 else if (args.Parameters.Length == 2)
                                     args.Result = Math.Log(
                                         Convert.ToDouble(args.Parameters[0].Evaluate()),
-                                        Convert.ToDouble(args.Parameters[1].Evaluate())); // log(x, base)
+                                        Convert.ToDouble(args.Parameters[1].Evaluate()));
                                 break;
                             case "exp":
                                 args.Result = Math.Exp(Convert.ToDouble(args.Parameters[0].Evaluate()));
                                 break;
-                                // NCalc already supports sin, cos, tan, sqrt, abs, Pow etc.
+                                // Add more custom functions if needed
                         }
                     };
 

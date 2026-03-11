@@ -1,0 +1,552 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Analysis API - Root Finding Methods</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .method-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+            .method-card:hover {
+                transform: translateY(-5px);
+            }
+
+        .method-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .method-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .bisection .method-icon {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .newton .method-icon {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .secant .method-icon {
+            background: #45b7d1;
+            color: white;
+        }
+
+        .regula .method-icon {
+            background: #96ceb4;
+            color: white;
+        }
+
+        .preview .method-icon {
+            background: #f4d03f;
+            color: white;
+        }
+
+        .method-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s ease;
+        }
+
+            input:focus, textarea:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            margin-top: 10px;
+        }
+
+            button:hover {
+                opacity: 0.9;
+            }
+
+        .result-area {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            min-height: 80px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .success-result {
+            color: #27ae60;
+        }
+
+        .error-result {
+            color: #e74c3c;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .badge-online {
+            background: #27ae60;
+            color: white;
+        }
+
+        .badge-offline {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px 20px;
+            opacity: 0.8;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .preview-section {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .api-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Numerical Analysis API</h1>
+            <p class="subtitle">Interactive testing interface for root-finding methods</p>
+            <div class="api-status">
+                <span class="status-badge badge-online" id="apiStatus">API Online</span>
+                <span>Base URL: <span id="baseUrl"></span></span>
+            </div>
+        </header>
+
+        <div class="api-grid">
+            <!-- Bisection Method Card -->
+            <div class="method-card bisection">
+                <div class="method-header">
+                    <div class="method-icon">B</div>
+                    <div class="method-title">Bisection Method</div>
+                </div>
+                <div class="input-group">
+                    <label>Function f(x):</label>
+                    <input type="text" id="bisectionFunc" value="x^2 - 4" placeholder="e.g., x^2 - 4, sin(x), ln(x)">
+                </div>
+                <div class="input-group">
+                    <label>Interval [a, b]:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="bisectionA" value="0" placeholder="a" step="any">
+                        <input type="number" id="bisectionB" value="3" placeholder="b" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Tolerance:</label>
+                    <input type="number" id="bisectionTol" value="0.0001" step="any">
+                </div>
+                <button onclick="testBisection()">Find Root</button>
+                <div class="result-area" id="bisectionResult"></div>
+            </div>
+
+            <!-- Newton-Raphson Method Card -->
+            <div class="method-card newton">
+                <div class="method-header">
+                    <div class="method-icon">N</div>
+                    <div class="method-title">Newton-Raphson</div>
+                </div>
+                <div class="input-group">
+                    <label>Function f(x):</label>
+                    <input type="text" id="newtonFunc" value="x^2 - 4" placeholder="e.g., x^2 - 4">
+                </div>
+                <div class="input-group">
+                    <label>Derivative f'(x):</label>
+                    <input type="text" id="newtonDerivative" value="2*x" placeholder="e.g., 2*x">
+                </div>
+                <div class="input-group">
+                    <label>Initial Guess:</label>
+                    <input type="number" id="newtonGuess" value="1" step="any">
+                </div>
+                <div class="input-group">
+                    <label>Tolerance:</label>
+                    <input type="number" id="newtonTol" value="0.0001" step="any">
+                </div>
+                <button onclick="testNewton()">Find Root</button>
+                <div class="result-area" id="newtonResult"></div>
+            </div>
+
+            <!-- Secant Method Card -->
+            <div class="method-card secant">
+                <div class="method-header">
+                    <div class="method-icon">S</div>
+                    <div class="method-title">Secant Method</div>
+                </div>
+                <div class="input-group">
+                    <label>Function f(x):</label>
+                    <input type="text" id="secantFunc" value="x^2 - 4" placeholder="e.g., x^2 - 4">
+                </div>
+                <div class="input-group">
+                    <label>Initial Guesses [x0, x1]:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="secantX0" value="0" placeholder="x0" step="any">
+                        <input type="number" id="secantX1" value="3" placeholder="x1" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Tolerance:</label>
+                    <input type="number" id="secantTol" value="0.0001" step="any">
+                </div>
+                <button onclick="testSecant()">Find Root</button>
+                <div class="result-area" id="secantResult"></div>
+            </div>
+
+            <!-- Regula Falsi Method Card -->
+            <div class="method-card regula">
+                <div class="method-header">
+                    <div class="method-icon">R</div>
+                    <div class="method-title">Regula Falsi</div>
+                </div>
+                <div class="input-group">
+                    <label>Function f(x):</label>
+                    <input type="text" id="regulaFunc" value="x^2 - 4" placeholder="e.g., x^2 - 4">
+                </div>
+                <div class="input-group">
+                    <label>Interval [a, b]:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="regulaA" value="0" placeholder="a" step="any">
+                        <input type="number" id="regulaB" value="3" placeholder="b" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Tolerance:</label>
+                    <input type="number" id="regulaTol" value="0.0001" step="any">
+                </div>
+                <button onclick="testRegula()">Find Root</button>
+                <div class="result-area" id="regulaResult"></div>
+            </div>
+
+            <!-- Function Preview Card - Spans full width -->
+            <div class="preview-section">
+                <div class="method-header">
+                    <div class="method-icon">P</div>
+                    <div class="method-title">Function Preview & Testing</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <div class="input-group">
+                            <label>Function Expression:</label>
+                            <input type="text" id="previewFunc" value="sin(x)" placeholder="e.g., sin(x), x^2, ln(x)">
+                        </div>
+                        <div class="input-group">
+                            <label>Test Points (comma-separated):</label>
+                            <input type="text" id="previewPoints" value="0, 1.57, 3.14" placeholder="e.g., 0, 1, 2">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-group">
+                            <label>Range Preview:</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="number" id="previewStart" value="0" placeholder="Start" step="any">
+                                <input type="number" id="previewEnd" value="10" placeholder="End" step="any">
+                                <input type="number" id="previewSteps" value="5" placeholder="Steps">
+                            </div>
+                        </div>
+                        <button onclick="previewFunction()" style="margin-top: 28px;">Evaluate</button>
+                    </div>
+                </div>
+                <div class="result-area" id="previewResult" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Built with ASP.NET Core 8.0 | NCalc for expression parsing | Interactive API testing</p>
+            <p>Available endpoints: /api/RootFinding/bisection, /newton, /secant, /regulafalsi, /preview</p>
+        </footer>
+    </div>
+
+    <script>
+        // Set base URL dynamically
+        const baseUrl = window.location.origin;
+        document.getElementById('baseUrl').textContent = baseUrl + '/api/RootFinding/';
+
+        // Utility function to display results
+        function displayResult(elementId, data) {
+            const resultDiv = document.getElementById(elementId);
+            if (data.success) {
+                resultDiv.innerHTML = `<span class="success-result">✓ Root: ${data.root.toFixed(8)}<br>Iterations: ${data.iterations}</span>`;
+            } else {
+                resultDiv.innerHTML = `<span class="error-result">✗ Error: ${data.errorType}<br>${data.errorMessage}</span>`;
+            }
+        }
+
+        // API Functions
+        async function testBisection() {
+            const request = {
+                function: document.getElementById('bisectionFunc').value,
+                a: parseFloat(document.getElementById('bisectionA').value),
+                b: parseFloat(document.getElementById('bisectionB').value),
+                tolerance: parseFloat(document.getElementById('bisectionTol').value),
+                maxIterations: 100
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/api/RootFinding/bisection`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(request)
+                });
+                const data = await response.json();
+                displayResult('bisectionResult', data);
+            } catch (error) {
+                document.getElementById('bisectionResult').innerHTML =
+                    `<span class="error-result">✗ Network Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testNewton() {
+            const request = {
+                function: document.getElementById('newtonFunc').value,
+                derivative: document.getElementById('newtonDerivative').value,
+                initialGuess: parseFloat(document.getElementById('newtonGuess').value),
+                tolerance: parseFloat(document.getElementById('newtonTol').value),
+                maxIterations: 100
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/api/RootFinding/newton`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(request)
+                });
+                const data = await response.json();
+                displayResult('newtonResult', data);
+            } catch (error) {
+                document.getElementById('newtonResult').innerHTML =
+                    `<span class="error-result">✗ Network Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testSecant() {
+            const request = {
+                function: document.getElementById('secantFunc').value,
+                x0: parseFloat(document.getElementById('secantX0').value),
+                x1: parseFloat(document.getElementById('secantX1').value),
+                tolerance: parseFloat(document.getElementById('secantTol').value),
+                maxIterations: 100
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/api/RootFinding/secant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(request)
+                });
+                const data = await response.json();
+                displayResult('secantResult', data);
+            } catch (error) {
+                document.getElementById('secantResult').innerHTML =
+                    `<span class="error-result">✗ Network Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testRegula() {
+            const request = {
+                function: document.getElementById('regulaFunc').value,
+                a: parseFloat(document.getElementById('regulaA').value),
+                b: parseFloat(document.getElementById('regulaB').value),
+                tolerance: parseFloat(document.getElementById('regulaTol').value),
+                maxIterations: 100
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/api/RootFinding/regulafalsi`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(request)
+                });
+                const data = await response.json();
+                displayResult('regulaResult', data);
+            } catch (error) {
+                document.getElementById('regulaResult').innerHTML =
+                    `<span class="error-result">✗ Network Error: ${error.message}</span>`;
+            }
+        }
+
+        async function previewFunction() {
+            const points = document.getElementById('previewPoints').value
+                .split(',')
+                .map(p => parseFloat(p.trim()))
+                .filter(p => !isNaN(p));
+
+            // Get the function expression
+            let funcExpr = document.getElementById('previewFunc').value;
+
+            // Auto-capitalize function names
+            funcExpr = funcExpr.replace(/\b(sin|cos|tan|asin|acos|atan|sinh|cosh|tanh|sqrt|abs|log|ln|exp)\b/g,
+                match => match.charAt(0).toUpperCase() + match.slice(1).toLowerCase());
+
+            const response = await fetch('/api/RootFinding/preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    expression: funcExpr,
+                    points: points
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                let html = '<span class="success-result">✓ Function values:<br>';
+                data.results.forEach(r => {
+                    html += `f(${r.x.toFixed(4)}) = ${r.y.toFixed(6)}<br>`;
+                });
+                html += '</span>';
+                document.getElementById('previewResult').innerHTML = html;
+            } else {
+                document.getElementById('previewResult').innerHTML =
+                    `<span class="error-result">✗ Error: ${data.errorMessage}</span>`;
+            }
+        }
+
+        // Test API connection on load
+        async function testConnection() {
+            try {
+                const response = await fetch(`${baseUrl}/api/RootFinding/preview`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        expression: 'x',
+                        points: [1]
+                    })
+                });
+                if (response.ok) {
+                    document.getElementById('apiStatus').textContent = 'API Online';
+                    document.getElementById('apiStatus').className = 'status-badge badge-online';
+                } else {
+                    throw new Error('API not responding');
+                }
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = 'API Offline';
+                document.getElementById('apiStatus').className = 'status-badge badge-offline';
+            }
+        }
+
+        testConnection();
+    </script>
+</body>
+</html>

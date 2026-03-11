@@ -1,0 +1,12 @@
+{
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "cd NumericalAnalysisApi && dotnet restore && dotnet publish -c Release -o /opt/railway/app/publish"
+  },
+  "deploy": {
+    "startCommand": "cd /opt/railway/app/publish && dotnet NumericalAnalysisApi.dll --urls=http://0.0.0.0:$PORT",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 30,
+    "restartPolicyType": "ON_FAILURE"
+  }
+}
