@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numerical Analysis API - Root Finding Methods</title>
+    <title>Numerical Analysis API</title>
     <style>
+        :root {
+            --bg: #fdfdfd;
+            --text-main: #1a1a1a;
+            --text-muted: #666;
+            --border: #e5e5e5;
+            --accent: #000;
+            --success: #09721b;
+            --error: #cc0000;
+            --card-bg: #ffffff;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,215 +23,187 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
             padding: 40px 20px;
         }
 
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* --- Header Section --- */
+        header {
+            margin-bottom: 60px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
         h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .subtitle {
-            font-size: 1.2em;
-            opacity: 0.9;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
         }
 
+        .api-status {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .online-dot {
+            background: var(--success);
+        }
+
+        .offline-dot {
+            background: var(--error);
+        }
+
+        /* --- Grid & Cards --- */
         .api-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 40px;
         }
 
         .method-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
         }
 
             .method-card:hover {
-                transform: translateY(-5px);
+                border-color: var(--accent);
             }
 
         .method-header {
-            display: flex;
-            align-items: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 10px;
-        }
-
-        .method-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
-        .bisection .method-icon {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .newton .method-icon {
-            background: #4ecdc4;
-            color: white;
-        }
-
-        .secant .method-icon {
-            background: #45b7d1;
-            color: white;
-        }
-
-        .regula .method-icon {
-            background: #96ceb4;
-            color: white;
-        }
-
-        .preview .method-icon {
-            background: #f4d03f;
-            color: white;
         }
 
         .method-title {
-            font-size: 1.3em;
             font-weight: 600;
-            color: #333;
+            font-size: 1.1rem;
         }
 
+        .method-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        /* --- Form Elements --- */
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #666;
-            font-size: 0.9em;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
         }
 
-        input, textarea {
+        input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border 0.3s ease;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.2s;
         }
 
-            input:focus, textarea:focus {
+            input:focus {
                 outline: none;
-                border-color: #667eea;
+                border-color: var(--accent);
+                box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
             }
 
         button {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--accent);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: opacity 0.3s ease;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
             button:hover {
-                opacity: 0.9;
+                background: #333;
             }
 
+        /* --- Results Area --- */
         .result-area {
-            margin-top: 15px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            min-height: 80px;
-            max-height: 200px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
+            margin-top: 20px;
+            padding: 12px;
+            background: #fafafa;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: ui-monospace, monospace;
+            font-size: 0.85rem;
+            min-height: 60px;
+            white-space: pre-wrap;
         }
 
         .success-result {
-            color: #27ae60;
+            color: var(--success);
         }
 
         .error-result {
-            color: #e74c3c;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            margin-right: 10px;
-        }
-
-        .badge-online {
-            background: #27ae60;
-            color: white;
-        }
-
-        .badge-offline {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .api-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        footer {
-            text-align: center;
-            color: white;
-            padding: 30px 20px;
-            opacity: 0.8;
-        }
-
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: 30px;
+            color: var(--error);
         }
 
         .preview-section {
             grid-column: 1 / -1;
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
+            border-top: 2px solid var(--accent);
         }
 
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
-            }
+        footer {
+            margin-top: 80px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
 
+        @media (max-width: 600px) {
             .api-grid {
                 grid-template-columns: 1fr;
             }
@@ -231,151 +214,140 @@
     <div class="container">
         <header>
             <h1>📊 Numerical Analysis API</h1>
-            <p class="subtitle">Interactive testing interface for root-finding methods</p>
+            <p class="subtitle">Methods for solving non-linear equations $f(x) = 0$</p>
             <div class="api-status">
-                <span class="status-badge badge-online" id="apiStatus">API Online</span>
-                <span>Base URL: <span id="baseUrl"></span></span>
+                <span><span class="status-dot online-dot" id="dot"></span> <span id="apiStatus">System Online</span></span>
+                <span style="opacity: 0.5">|</span>
+                <span>Base: <code id="baseUrl"></code></span>
             </div>
         </header>
 
         <div class="api-grid">
             <!-- Bisection Method Card -->
-            <div class="method-card bisection">
+            <div class="method-card">
                 <div class="method-header">
-                    <div class="method-icon">B</div>
-                    <div class="method-title">Bisection Method</div>
+                    <span class="method-title">Bisection Method</span>
+                    <span class="method-tag">Bracketing</span>
                 </div>
                 <div class="input-group">
-                    <label>Function f(x):</label>
-                    <input type="text" id="bisectionFunc" value="x^2 - 4" placeholder="e.g., x^2 - 4, sin(x), ln(x)">
+                    <label>Function $f(x)$</label>
+                    <input type="text" id="bisectionFunc" value="x^2 - 4">
                 </div>
-                <div class="input-group">
-                    <label>Interval [a, b]:</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="number" id="bisectionA" value="0" placeholder="a" step="any">
-                        <input type="number" id="bisectionB" value="3" placeholder="b" step="any">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>Lower (a)</label>
+                        <input type="number" id="bisectionA" value="0" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Upper (b)</label>
+                        <input type="number" id="bisectionB" value="3" step="any">
                     </div>
                 </div>
-                <div class="input-group">
-                    <label>Tolerance:</label>
-                    <input type="number" id="bisectionTol" value="0.0001" step="any">
-                </div>
-                <button onclick="testBisection()">Find Root</button>
+                <button onclick="testBisection()">Execute POST</button>
                 <div class="result-area" id="bisectionResult"></div>
             </div>
 
             <!-- Newton-Raphson Method Card -->
-            <div class="method-card newton">
+            <div class="method-card">
                 <div class="method-header">
-                    <div class="method-icon">N</div>
-                    <div class="method-title">Newton-Raphson</div>
+                    <span class="method-title">Newton-Raphson</span>
+                    <span class="method-tag">Open Method</span>
                 </div>
                 <div class="input-group">
-                    <label>Function f(x):</label>
-                    <input type="text" id="newtonFunc" value="x^2 - 4" placeholder="e.g., x^2 - 4">
+                    <label>Function $f(x)$</label>
+                    <input type="text" id="newtonFunc" value="x^2 - 4">
                 </div>
                 <div class="input-group">
-                    <label>Derivative f'(x):</label>
-                    <input type="text" id="newtonDerivative" value="2*x" placeholder="e.g., 2*x">
+                    <label>Derivative $f'(x)$</label>
+                    <input type="text" id="newtonDerivative" value="2*x">
                 </div>
-                <div class="input-group">
-                    <label>Initial Guess:</label>
-                    <input type="number" id="newtonGuess" value="1" step="any">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>Initial Guess</label>
+                        <input type="number" id="newtonGuess" value="1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Tolerance</label>
+                        <input type="number" id="newtonTol" value="0.0001" step="any">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label>Tolerance:</label>
-                    <input type="number" id="newtonTol" value="0.0001" step="any">
-                </div>
-                <button onclick="testNewton()">Find Root</button>
+                <button onclick="testNewton()">Execute POST</button>
                 <div class="result-area" id="newtonResult"></div>
             </div>
 
             <!-- Secant Method Card -->
-            <div class="method-card secant">
+            <div class="method-card">
                 <div class="method-header">
-                    <div class="method-icon">S</div>
-                    <div class="method-title">Secant Method</div>
+                    <span class="method-title">Secant Method</span>
+                    <span class="method-tag">Open Method</span>
                 </div>
                 <div class="input-group">
-                    <label>Function f(x):</label>
-                    <input type="text" id="secantFunc" value="x^2 - 4" placeholder="e.g., x^2 - 4">
+                    <label>Function $f(x)$</label>
+                    <input type="text" id="secantFunc" value="x^2 - 4">
                 </div>
-                <div class="input-group">
-                    <label>Initial Guesses [x0, x1]:</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="number" id="secantX0" value="0" placeholder="x0" step="any">
-                        <input type="number" id="secantX1" value="3" placeholder="x1" step="any">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>First Guess (x₀)</label>
+                        <input type="number" id="secantX0" value="0" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Second Guess (x₁)</label>
+                        <input type="number" id="secantX1" value="3" step="any">
                     </div>
                 </div>
-                <div class="input-group">
-                    <label>Tolerance:</label>
-                    <input type="number" id="secantTol" value="0.0001" step="any">
-                </div>
-                <button onclick="testSecant()">Find Root</button>
+                <button onclick="testSecant()">Execute POST</button>
                 <div class="result-area" id="secantResult"></div>
             </div>
 
             <!-- Regula Falsi Method Card -->
-            <div class="method-card regula">
+            <div class="method-card">
                 <div class="method-header">
-                    <div class="method-icon">R</div>
-                    <div class="method-title">Regula Falsi</div>
+                    <span class="method-title">Regula Falsi</span>
+                    <span class="method-tag">Bracketing</span>
                 </div>
                 <div class="input-group">
-                    <label>Function f(x):</label>
-                    <input type="text" id="regulaFunc" value="x^2 - 4" placeholder="e.g., x^2 - 4">
+                    <label>Function $f(x)$</label>
+                    <input type="text" id="regulaFunc" value="x^2 - 4">
                 </div>
-                <div class="input-group">
-                    <label>Interval [a, b]:</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="number" id="regulaA" value="0" placeholder="a" step="any">
-                        <input type="number" id="regulaB" value="3" placeholder="b" step="any">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>Lower (a)</label>
+                        <input type="number" id="regulaA" value="0" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Upper (b)</label>
+                        <input type="number" id="regulaB" value="3" step="any">
                     </div>
                 </div>
-                <div class="input-group">
-                    <label>Tolerance:</label>
-                    <input type="number" id="regulaTol" value="0.0001" step="any">
-                </div>
-                <button onclick="testRegula()">Find Root</button>
+                <button onclick="testRegula()">Execute POST</button>
                 <div class="result-area" id="regulaResult"></div>
             </div>
 
-            <!-- Function Preview Card - Spans full width -->
-            <div class="preview-section">
+            <!-- Function Preview Section -->
+            <div class="method-card preview-section">
                 <div class="method-header">
-                    <div class="method-icon">P</div>
-                    <div class="method-title">Function Preview & Testing</div>
+                    <span class="method-title">Function Preview</span>
+                    <span class="method-tag">Utility</span>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
                     <div>
                         <div class="input-group">
-                            <label>Function Expression:</label>
-                            <input type="text" id="previewFunc" value="sin(x)" placeholder="e.g., sin(x), x^2, ln(x)">
+                            <label>Expression</label>
+                            <input type="text" id="previewFunc" value="sin(x)">
                         </div>
                         <div class="input-group">
-                            <label>Test Points (comma-separated):</label>
-                            <input type="text" id="previewPoints" value="0, 1.57, 3.14" placeholder="e.g., 0, 1, 2">
+                            <label>Test Points (comma separated)</label>
+                            <input type="text" id="previewPoints" value="0, 1.57, 3.14">
                         </div>
                     </div>
-                    <div>
-                        <div class="input-group">
-                            <label>Range Preview:</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="number" id="previewStart" value="0" placeholder="Start" step="any">
-                                <input type="number" id="previewEnd" value="10" placeholder="End" step="any">
-                                <input type="number" id="previewSteps" value="5" placeholder="Steps">
-                            </div>
-                        </div>
-                        <button onclick="previewFunction()" style="margin-top: 28px;">Evaluate</button>
-                    </div>
+                    <button onclick="previewFunction()" style="height: fit-content; align-self: end; margin-bottom: 16px;">Evaluate</button>
                 </div>
-                <div class="result-area" id="previewResult" style="margin-top: 20px;"></div>
+                <div class="result-area" id="previewResult"></div>
             </div>
         </div>
 
         <footer>
-            <p>Built with ASP.NET Core 8.0 | NCalc for expression parsing | Interactive API testing</p>
-            <p>Available endpoints: /api/RootFinding/bisection, /newton, /secant, /regulafalsi, /preview</p>
+            <p>ASP.NET Core 8.0 • NCalc Engine • Applied Mathematics Research 2026</p>
         </footer>
     </div>
 
@@ -384,7 +356,7 @@
         const baseUrl = window.location.origin;
         document.getElementById('baseUrl').textContent = baseUrl + '/api/RootFinding/';
 
-        // Utility function to display results
+        // Utility function to display results with new styling
         function displayResult(elementId, data) {
             const resultDiv = document.getElementById(elementId);
             if (data.success) {
@@ -400,12 +372,12 @@
                 function: document.getElementById('bisectionFunc').value,
                 a: parseFloat(document.getElementById('bisectionA').value),
                 b: parseFloat(document.getElementById('bisectionB').value),
-                tolerance: parseFloat(document.getElementById('bisectionTol').value),
+                tolerance: 0.0001,
                 maxIterations: 100
             };
 
             try {
-                const response = await fetch(`${baseUrl}/api/RootFinding/bisection`, {
+                const response = await fetch('/api/RootFinding/bisection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(request)
@@ -428,7 +400,7 @@
             };
 
             try {
-                const response = await fetch(`${baseUrl}/api/RootFinding/newton`, {
+                const response = await fetch('/api/RootFinding/newton', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(request)
@@ -446,12 +418,12 @@
                 function: document.getElementById('secantFunc').value,
                 x0: parseFloat(document.getElementById('secantX0').value),
                 x1: parseFloat(document.getElementById('secantX1').value),
-                tolerance: parseFloat(document.getElementById('secantTol').value),
+                tolerance: 0.0001,
                 maxIterations: 100
             };
 
             try {
-                const response = await fetch(`${baseUrl}/api/RootFinding/secant`, {
+                const response = await fetch('/api/RootFinding/secant', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(request)
@@ -469,12 +441,12 @@
                 function: document.getElementById('regulaFunc').value,
                 a: parseFloat(document.getElementById('regulaA').value),
                 b: parseFloat(document.getElementById('regulaB').value),
-                tolerance: parseFloat(document.getElementById('regulaTol').value),
+                tolerance: 0.0001,
                 maxIterations: 100
             };
 
             try {
-                const response = await fetch(`${baseUrl}/api/RootFinding/regulafalsi`, {
+                const response = await fetch('/api/RootFinding/regulafalsi', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(request)
@@ -493,40 +465,45 @@
                 .map(p => parseFloat(p.trim()))
                 .filter(p => !isNaN(p));
 
-            // Get the function expression
+            // Auto-capitalize function names for NCalc
             let funcExpr = document.getElementById('previewFunc').value;
-
-            // Auto-capitalize function names
             funcExpr = funcExpr.replace(/\b(sin|cos|tan|asin|acos|atan|sinh|cosh|tanh|sqrt|abs|log|ln|exp)\b/g,
                 match => match.charAt(0).toUpperCase() + match.slice(1).toLowerCase());
 
-            const response = await fetch('/api/RootFinding/preview', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    expression: funcExpr,
-                    points: points
-                })
-            });
+            const request = {
+                expression: funcExpr,
+                points: points.length > 0 ? points : null
+            };
 
-            const data = await response.json();
-            if (data.success) {
-                let html = '<span class="success-result">✓ Function values:<br>';
-                data.results.forEach(r => {
-                    html += `f(${r.x.toFixed(4)}) = ${r.y.toFixed(6)}<br>`;
+            try {
+                const response = await fetch('/api/RootFinding/preview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(request)
                 });
-                html += '</span>';
-                document.getElementById('previewResult').innerHTML = html;
-            } else {
+                const data = await response.json();
+
+                if (data.success) {
+                    let html = '<span class="success-result">✓ Function values:<br>';
+                    data.results.forEach(r => {
+                        html += `f(${r.x.toFixed(4)}) = ${r.y.toFixed(6)}<br>`;
+                    });
+                    html += '</span>';
+                    document.getElementById('previewResult').innerHTML = html;
+                } else {
+                    document.getElementById('previewResult').innerHTML =
+                        `<span class="error-result">✗ Error: ${data.errorType}: ${data.errorMessage}</span>`;
+                }
+            } catch (error) {
                 document.getElementById('previewResult').innerHTML =
-                    `<span class="error-result">✗ Error: ${data.errorMessage}</span>`;
+                    `<span class="error-result">✗ Network Error: ${error.message}</span>`;
             }
         }
 
         // Test API connection on load
         async function testConnection() {
             try {
-                const response = await fetch(`${baseUrl}/api/RootFinding/preview`, {
+                const response = await fetch('/api/RootFinding/preview', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -535,17 +512,18 @@
                     })
                 });
                 if (response.ok) {
-                    document.getElementById('apiStatus').textContent = 'API Online';
-                    document.getElementById('apiStatus').className = 'status-badge badge-online';
+                    document.getElementById('apiStatus').textContent = 'System Online';
+                    document.getElementById('dot').className = 'status-dot online-dot';
                 } else {
                     throw new Error('API not responding');
                 }
             } catch (error) {
-                document.getElementById('apiStatus').textContent = 'API Offline';
-                document.getElementById('apiStatus').className = 'status-badge badge-offline';
+                document.getElementById('apiStatus').textContent = 'System Offline';
+                document.getElementById('dot').className = 'status-dot offline-dot';
             }
         }
 
+        // Initialize
         testConnection();
     </script>
 </body>
