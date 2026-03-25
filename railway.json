@@ -1,6 +1,7 @@
 {
   "build": {
     "builder": "NIXPACKS",
+    "nixPkgs": ["dotnet-sdk_8"],
     "buildCommand": "cd NumericalAnalysisApi && dotnet restore && dotnet publish -c Release -o /opt/railway/app/publish"
   },
   "deploy": {
