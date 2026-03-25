@@ -1,13 +1,10 @@
 {
   "build": {
-    "builder": "NIXPACKS",
-    "nixPkgs": ["dotnet-sdk_8"],
-    "buildCommand": "cd NumericalAnalysisApi && dotnet restore && dotnet publish -c Release -o /opt/railway/app/publish"
+    "builder": "DOCKERFILE"
   },
   "deploy": {
-    "startCommand": "cd /opt/railway/app/publish && dotnet NumericalAnalysisApi.dll --urls=http://0.0.0.0:$PORT",
+    "restartPolicyType": "ON_FAILURE",
     "healthcheckPath": "/",
-    "healthcheckTimeout": 30,
-    "restartPolicyType": "ON_FAILURE"
+    "healthcheckTimeout": 30
   }
 }
