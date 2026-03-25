@@ -1,0 +1,14 @@
+# Create the nixpacks.toml file in your root directory
+@"
+[phases.setup]
+nixPkgs = ["dotnet-sdk_8"]
+
+[phases.install]
+cmds = ["cd NumericalAnalysisApi && dotnet restore"]
+
+[phases.build]
+cmds = ["cd NumericalAnalysisApi && dotnet publish -c Release -o /app/publish"]
+
+[start]
+cmd = "cd /app/publish && dotnet NumericalAnalysisApi.dll --urls=http://0.0.0.0:\$PORT"
+"@ | Out-File -FilePath nixpacks.toml -Encoding UTF8
